@@ -1,31 +1,33 @@
 package com.example.pages;
 
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selenide.$x;
-import com.codeborne.selenide.SelenideElement;
+
 import com.example.pages.components.PostRecord;
+import com.example.pages.components.SideBar;
 
-public class FeedPage extends OkPage {
+import static com.codeborne.selenide.Selenide.$;
 
-    private final SelenideElement momentsPath = $x("//*[@data-l='t,to_moments']");
-    private final SelenideElement hobbiesPath = $x("//*[@data-l='t,to_hobbies']");
+import org.openqa.selenium.By;
 
-    public FeedPage() {
-        checkFeedPage();
-    }
+public class FeedPage implements CheckPage {
 
-    public void checkFeedPage() {
-        momentsPath.shouldBe(visible.because("Moments path is not visible"));
-        hobbiesPath.shouldBe(visible.because("Hobbies path is not visible"));
+    public static By momentsPath = By.xpath(".//*[@data-l='t,to_moments']");
+    public static By hobbiesPath = By.xpath(".//*[@data-l='t,to_hobbies']");
+    private final SideBar sideBar = new SideBar();
+
+    @Override
+    public void checkPage() {
+        $(momentsPath).shouldBe(visible.because("Moments path is not visible"));
+        $(hobbiesPath).shouldBe(visible.because("Hobbies path is not visible"));
     }
 
     public PostRecord postClick() {
-        this.sideBar.postPath.click();
+        this.sideBar.postPathClick();
         return new PostRecord();
     }
 
     public ProfilePage profileClick() {
-        this.sideBar.profilePath.click();
+        this.sideBar.profilePathClick();
         return new ProfilePage();
     }
 

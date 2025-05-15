@@ -10,13 +10,17 @@ import com.codeborne.selenide.Configuration;
 import com.example.pages.LoginPage;
 
 import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.webdriver;
+
+import com.example.auth.AuthService;
+import com.example.auth.DefaultAuthService;
 
 public abstract class MainTest {
 
-    private final String login = "technopol39";
-    private final String password = "technopolisPassword";
+    private final AuthService authService = new DefaultAuthService();
 
-    private static final String CHROME_USER_DATA_DIR = "C:/Users/Пользователь/AppData/Local/Google/Chrome/User Data" + System.currentTimeMillis();
+    String login = authService.getLogin(); // теперь логин и пароль задаются через переменные окружения
+    String password = authService.getPassword(); 
 
     public final String loginURL = "https://ok.ru/";
 
@@ -25,7 +29,6 @@ public abstract class MainTest {
         Configuration.headless = false;
         Configuration.timeout = 100; //
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--user-data-dir=" + CHROME_USER_DATA_DIR);
         options.addArguments("--profile-directory=Default");
         options.addArguments("--start-maximized"); 
         Configuration.browserCapabilities = options;
@@ -34,7 +37,7 @@ public abstract class MainTest {
     @BeforeEach
     public void authorize() {
         open(loginURL);
-
+        webdriver().driver().getWebDriver().manage().window().maximize();
         LoginPage loginPage = new LoginPage();
         loginPage.authorize(login, password);
     }

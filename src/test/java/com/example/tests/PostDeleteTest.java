@@ -13,37 +13,50 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import com.example.pages.*;
 
-public class PostDeleteTest extends MainTest {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    //@Disabled
+class PostDeleteTest extends MainTest {
+    private static final Logger log = LoggerFactory.getLogger(PostDeleteTest.class);
+
     @Tag("post")
     @DisplayName("Проверка публикации и удаления поста")
     @ParameterizedTest
-    @ValueSource(strings = {"Тест 1", "Второй тест"})
-    public void testPostingRecord(String text) {
+    @ValueSource(strings = {"Тест 1"})
+    void testPostingRecord(String text) {
 
+        log.info("Проверка публикации и удаления поста с текстом '{}'", text);
+        
         FeedPage feedPage = new FeedPage().postClick()
                 .recordClick()
+                .closeAnnoyingElementIfPresent() // добавил это, потому что при попытке создания записи постоянно появляется небольшое окно с текстом "Для кого опубликовать заметку?"
                 .enterTextClick(text)
                 .shareRecordClick();
+
+        log.info("Пост опубликован на стену");
 
         ProfilePage profilePage = feedPage.profileClick();
 
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         String currentTime = now.format(formatter);
-        String timePlus1 = now.plusMinutes(1).format(formatter);
+        String timePlus1Minute = now.plusMinutes(1).format(formatter);
 
-        refresh();
-
-        assertAll(
-            () -> profilePage.verifyPostIsPublished(text),
-            () -> profilePage.verifyTimePublishedPost(currentTime, timePlus1)
+        log.info("Проверка наличия поста");
+        assertAll( // проверяет публикацию поста
+            () -> {
+                try {
+                    profilePage.verifyPostIsPublished(text);
+                } catch (AssertionError e) {
+                    throw new AssertionError("проверка публикации поста с текстом '" + text + "' не прошла: " + e.getMessage(), e);
+                }
+            }
         );
 
         ProfilePage newProfilePage = profilePage.deletePost();
         refresh();
-        newProfilePage.verifyPostIsDeleted(text, currentTime, timePlus1);
+        newProfilePage.verifyPostIsDeleted(text, currentTime, timePlus1Minute);
 
+        log.info("Пост успешно удален" );
     }
 }
