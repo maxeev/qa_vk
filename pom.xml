@@ -12,11 +12,11 @@
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
+      <artifactId>junit-jupiter</artifactId>
       <version>5.10.0</version>
       <scope>test</scope>
     </dependency>
@@ -38,6 +38,16 @@
       <version>7.7.3</version>
       <scope>test</scope>
     </dependency>
+        <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.7.30</version>
+    </dependency>
+    <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>1.2.3</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -46,7 +56,6 @@
             <artifactId>maven-compiler-plugin</artifactId>
             <version>3.8.1</version>
         </plugin>
-
         <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
@@ -55,7 +64,6 @@
                 <mainClass>ru.vk.Main</mainClass>
             </configuration>
         </plugin>
-
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
