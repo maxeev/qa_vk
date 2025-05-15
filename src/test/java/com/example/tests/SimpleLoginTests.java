@@ -13,14 +13,18 @@ import static com.codeborne.selenide.Condition.text;
 import com.codeborne.selenide.Configuration;
 import com.example.pages.LoginPage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 class SimpleLoginTests {
+    private static final Logger log = LoggerFactory.getLogger(SimpleLoginTests.class);
 
     public final String loginURL = "https://ok.ru/";
 
     static {
         Configuration.browser = "chrome";
         Configuration.headless = false;
-        Configuration.timeout = 100; //
+        Configuration.timeout = 100; 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--profile-directory=Default");
         options.addArguments("--start-maximized"); 
@@ -29,7 +33,7 @@ class SimpleLoginTests {
 
     @BeforeEach
     void setUp() {
-        // Открываем страницу входа перед каждым тестом
+        log.info("Открываем страницу входа перед каждым тестом");
         open(loginURL);
         webdriver().driver().getWebDriver().manage().window().maximize();
     }
@@ -37,38 +41,38 @@ class SimpleLoginTests {
     @Test
     @DisplayName("Тест: Неправильный логин")
     void testUnsuccessfulLogin() {
-        // Попытка входа с неверными данными
+        log.info("Попытка входа с неверными данными");
         $(LoginPage.loginxPath).setValue("invalidUser ");
         $(LoginPage.passwordxPath).setValue("invalidPassword");
         $(LoginPage.authorizeButton).click();
 
-        // Проверка, что отображается сообщение об ошибке
+        log.info("Проверка, что отображается нужное сообщение об ошибке");
         String expectedErrorMessage = "Неправильно указан логин и/или пароль";
-        $x(LoginPage.errMessagexPath).shouldBe(visible).shouldHave(text(expectedErrorMessage));
+        $(LoginPage.errMessagexPath).shouldBe(visible).shouldHave(text(expectedErrorMessage));
     }
 
     @Test
     @DisplayName("Тест: Пустой логин")
     void testEmptyUsername() {
-        // Вводим только пароль
+        log.info("Вводим только пароль");
         $(LoginPage.passwordxPath).setValue("somePassword");
         $(LoginPage.authorizeButton).click();
 
-        // Проверка, что отображается сообщение об ошибке
+        log.info("Проверка, что отображается нужное сообщение об ошибке");
         String expectedErrorMessage = "Введите логин";
-        $x(LoginPage.errMessagexPath).shouldBe(visible).shouldHave(text(expectedErrorMessage));
+        $(LoginPage.errMessagexPath).shouldBe(visible).shouldHave(text(expectedErrorMessage));
     }
 
     @Test
     @DisplayName("Тест: Пустой пароль")
     void testEmptyPassword() {
-        // Вводим только логин
+        log.info("Проверка, вводим только логин");
         $(LoginPage.loginxPath).setValue("someUser ");
         $(LoginPage.authorizeButton).click();
 
-        // Проверка, что отображается сообщение об ошибке
+        log.info("Проверка, что отображается нужное сообщение об ошибке");
         String expectedErrorMessage = "Введите пароль";
-        $x(LoginPage.errMessagexPath).shouldBe(visible).shouldHave(text(expectedErrorMessage));
+        $(LoginPage.errMessagexPath).shouldBe(visible).shouldHave(text(expectedErrorMessage));
     }
 
     @AfterEach
